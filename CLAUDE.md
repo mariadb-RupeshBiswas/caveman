@@ -294,6 +294,10 @@ Reads JSON from stdin — `session_id` scopes every read and write. Three respon
 
 **3. Per-turn reinforcement.** When the session's mode is a non-independent one (i.e. not `commit`/`review`/`compress`), emits a small `hookSpecificOutput` JSON reminder so the model keeps caveman style after other plugins inject competing instructions mid-conversation. The full ruleset still comes from SessionStart — this is just an attention anchor.
 
+### `src/hooks/caveman_gate.py` — Stop hook (cloud sessions)
+
+Lints each finished reply against the active level: max 6 prose lines, 2 sentences per paragraph, 15 words per sentence. Code blocks and tables are exempt. Over the limit → exit 2 with the violations, so Claude rewrites; a second block in the same cycle only warns, to avoid loops. Runs only when `CLAUDE_CODE_REMOTE=true` (cloud sessions), because local machines keep their own gate in `settings.json`. `CAVEMAN_GATE=1` forces it on, `CAVEMAN_GATE=0` turns it off. Plugin-only: not in the standalone installer or `checksums.sha256`. Tests: `tests/test_caveman_gate.py`.
+
 ### `src/hooks/caveman-statusline.sh` — Statusline badge
 
 Reads the session JSON Claude Code pipes to it on stdin, extracts `session_id` (pure bash — no `jq` dependency), and reads `.caveman-sessions/<id>.mode`; falls back to `$CLAUDE_CONFIG_DIR/.caveman-active` when there is no usable id. Outputs colored badge string for Claude Code statusline:
