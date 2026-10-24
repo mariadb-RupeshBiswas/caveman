@@ -54,6 +54,18 @@
           }
         ]
       }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "command -v python3 >/dev/null 2>&1 || exit 0; HOOK_ROOT=$(printf %s \"${CLAUDE_PLUGIN_ROOT}\" | sed 's|^/\\([a-zA-Z]\\)/|\\1:/|'); python3 \"$HOOK_ROOT/src/hooks/caveman_gate.py\"",
+            "timeout": 10,
+            "statusMessage": "caveman gate"
+          }
+        ]
+      }
     ]
   }
 }
